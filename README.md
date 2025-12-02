@@ -79,7 +79,7 @@ volumes:
 ```
 docker-compose up --build
 ```
-3. App runs on **http://localhost:5000**
+3. App runs on **http://localhost:8080**
 
 ---
 
