@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: flaskdb
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-ppass"]
+      interval: 5s
+      retries: 5
+    # Optional: set restart policy for dev convenience
+    restart: unless-stopped
+
+  web:
+    build: .
+    image: flask-guestbook:latest
+    container_name: flask-web
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASS: pass
+      DB_NAME: flaskdb
+    ports:
+      - "8080:5000"
+    # No volumes here - app state is in DB; edit code locally and rebuild if needed
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
